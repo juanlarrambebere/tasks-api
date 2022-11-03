@@ -17,6 +17,7 @@ model User {
   username  String   @db.VarChar(255) @unique
   password  String
   tasks     Task[]
+  accessToken String?
 }
 
 model Task {
