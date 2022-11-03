@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { UnauthorizedError } from "../errors";
 import { CreateUserRequestBody } from "../schemas/createUserSchema";
 import { LoginRequestBody } from "../schemas/loginSchema";
-import { createUser, login } from "../services/usersService";
+import { login } from "../services/authenticationService";
+import { createUser } from "../services/usersService";
 
 export const createUserHandler = async (
   req: Request<{}, {}, CreateUserRequestBody>,
