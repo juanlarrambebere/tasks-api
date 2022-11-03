@@ -52,9 +52,8 @@ export const decodeAccessToken = async (encodedAccessToken: string) => {
     },
   });
 
-  const isTokenValid = !!user && user.accessToken === encodedAccessToken;
-
-  if (!isTokenValid) return null;
+  const isLatestToken = !!user && user.accessToken === encodedAccessToken;
+  if (!isLatestToken) return null;
 
   return {
     userId: tokenRaw.userId,
