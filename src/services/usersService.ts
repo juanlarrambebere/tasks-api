@@ -2,14 +2,15 @@ import argon2 from "argon2";
 import { BadRequestError } from "../errors";
 import { isUniqueConstraintViolation, prismaClient } from "../prisma/client";
 import { CreateUserRequestBody } from "../schemas/createUserSchema";
+import { LoginRequestBody } from "../schemas/loginSchema";
 
-export const createUser = async (userInput: CreateUserRequestBody) => {
-  const hashedPassword = await argon2.hash(userInput.password);
+export const createUser = async (data: CreateUserRequestBody) => {
+  const hashedPassword = await argon2.hash(data.password);
 
   try {
     const user = await prismaClient.user.create({
       data: {
-        username: userInput.username,
+        username: data.username,
         password: hashedPassword,
       },
     });
@@ -26,4 +27,8 @@ export const createUser = async (userInput: CreateUserRequestBody) => {
 
     throw e;
   }
+};
+
+export const login = async (data: LoginRequestBody) => {
+  // TODO implement me
 };
