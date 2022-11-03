@@ -23,4 +23,4 @@ export const createUserSchema = z.object({
   body: bodySchema,
 });
 
-export type CreateUserInput = z.infer<typeof bodySchema>;
+export type CreateUserRequestBody = z.infer<typeof bodySchema>;

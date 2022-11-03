@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateUserInput } from "../schemas/createUserSchema";
+import { CreateUserRequestBody } from "../schemas/createUserSchema";
 import { createUser } from "../services/usersService";
 
 export const createUserHandler = async (
-  req: Request<{}, {}, CreateUserInput>,
+  req: Request<{}, {}, CreateUserRequestBody>,
   res: Response,
   next: NextFunction
 ) => {

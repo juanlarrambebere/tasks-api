@@ -1,9 +1,9 @@
 import argon2 from "argon2";
 import { BadRequestError } from "../errors";
 import { isUniqueConstraintViolation, prismaClient } from "../prisma/client";
-import { CreateUserInput } from "../schemas/createUserSchema";
+import { CreateUserRequestBody } from "../schemas/createUserSchema";
 
-export const createUser = async (userInput: CreateUserInput) => {
+export const createUser = async (userInput: CreateUserRequestBody) => {
   const hashedPassword = await argon2.hash(userInput.password);
 
   try {
