@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { UnauthorizedError } from "../errors";
 import { CreateUserRequestBody } from "../schemas/createUserSchema";
 import { LoginRequestBody } from "../schemas/loginSchema";
 import { createUser, login } from "../services/usersService";
@@ -23,9 +24,12 @@ export const loginHandler = async (
   next: NextFunction
 ) => {
   try {
-    const authData = await login(req.body);
+    const accessToken = await login(req.body);
+    if (!accessToken) {
+      return next(new UnauthorizedError("Invalid credentials"));
+    }
 
-    res.status(200).json(authData);
+    res.status(200).json({ accessToken });
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 import { BadRequestError } from "../errors";
 import { isUniqueConstraintViolation, prismaClient } from "../prisma/client";
 import { CreateUserRequestBody } from "../schemas/createUserSchema";
@@ -30,5 +31,33 @@ export const createUser = async (data: CreateUserRequestBody) => {
 };
 
 export const login = async (data: LoginRequestBody) => {
-  // TODO implement me
+  const user = await prismaClient.user.findUnique({
+    where: {
+      username: data.username,
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  const isPasswordCorrect = await argon2.verify(user.password, data.password);
+  if (!isPasswordCorrect) {
+    return null;
+  }
+
+  const accessToken = jwt.sign(
+    {
+      userId: user.id,
+      signedAt: new Date(),
+    },
+    process.env.AUTHENTICATION_SECRET!
+  );
+
+  await prismaClient.user.update({
+    where: { id: user.id },
+    data: { accessToken },
+  });
+
+  return accessToken;
 };
