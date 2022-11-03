@@ -61,3 +61,30 @@ export const login = async (data: LoginRequestBody) => {
 
   return accessToken;
 };
+
+export const decodeAccessToken = async (encodedAccessToken: string) => {
+  let tokenRaw: AccessTokenRaw;
+
+  try {
+    tokenRaw = <AccessTokenRaw>(
+      jwt.verify(encodedAccessToken, process.env.AUTHENTICATION_SECRET!)
+    );
+  } catch (_error) {
+    return null;
+  }
+
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: tokenRaw.userId,
+    },
+  });
+
+  const isTokenValid = !!user && user.accessToken === encodedAccessToken;
+
+  if (!isTokenValid) return null;
+
+  return {
+    userId: tokenRaw.userId,
+    signedAt: new Date(tokenRaw.signedAt),
+  };
+};
