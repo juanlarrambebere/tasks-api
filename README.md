@@ -94,4 +94,4 @@ Notes:
 1. CI Github action to run the tests on each pull request to the main branch.
 2. Test the whole app
 3. Setup eslint
-4.
+4. The endpoint used to list tasks should be paginated
