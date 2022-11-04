@@ -2,7 +2,7 @@ import { Task } from "@prisma/client";
 import { ForbiddenError, NotFoundError } from "../errors";
 import { prismaClient } from "../prisma/client";
 import { CreateTaskRequestBody } from "../schemas/createTaskSchema";
-import { createTask, updateTask } from "./tasksSevice";
+import { createTask, getUserTasks, updateTask } from "./tasksSevice";
 
 jest.mock("../prisma/client", () => ({
   prismaClient: {
@@ -50,6 +50,7 @@ describe("taskService", () => {
       await createTask(theUserId, taskData).catch((error: Error) => {
         expect(error).toEqual(theError);
       });
+
       expect(prismaClient.task.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -67,6 +68,12 @@ describe("taskService", () => {
       });
 
       expect(prismaClient.task.findFirst).toHaveBeenCalledTimes(1);
+      expect(prismaClient.task.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: taskId },
+        })
+      );
+
       expect(prismaClient.task.update).not.toHaveBeenCalled();
     });
 
@@ -87,6 +94,12 @@ describe("taskService", () => {
       });
 
       expect(prismaClient.task.findFirst).toHaveBeenCalledTimes(1);
+      expect(prismaClient.task.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: taskId },
+        })
+      );
+
       expect(prismaClient.task.update).not.toHaveBeenCalled();
     });
 
@@ -102,6 +115,12 @@ describe("taskService", () => {
       await updateTask(theUserId, taskId, taskData);
 
       expect(prismaClient.task.findFirst).toHaveBeenCalledTimes(1);
+      expect(prismaClient.task.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: taskId },
+        })
+      );
+
       expect(prismaClient.task.update).toHaveBeenCalledTimes(1);
       expect(prismaClient.task.update).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -111,6 +130,25 @@ describe("taskService", () => {
           data: taskData,
         })
       );
+    });
+  });
+
+  describe("getUserTasks", () => {
+    it("returns the tasks from the given user", async () => {
+      const expectedUserTasks = [{ id: 1 } as Task, { id: 2 } as Task];
+      jest
+        .mocked(prismaClient.task.findMany)
+        .mockResolvedValue(expectedUserTasks);
+
+      const userTasks = await getUserTasks(theUserId);
+
+      expect(prismaClient.task.findMany).toHaveBeenCalledTimes(1);
+      expect(prismaClient.task.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: theUserId },
+        })
+      );
+      expect(userTasks).toEqual(expectedUserTasks);
     });
   });
 });
