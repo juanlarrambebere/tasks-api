@@ -1,10 +1,18 @@
+import { TaskStatus } from "@prisma/client";
 import { z } from "zod";
+import { isTaskStatusValid } from "../utils";
 
 const bodySchema = z
   .object({
     title: z.string(),
     description: z.string(),
-    status: z.string(),
+    status: z
+      .string()
+      .refine(
+        isTaskStatusValid,
+        `status must be a valid task status (${Object.values(TaskStatus)})`
+      )
+      .transform((value) => value as TaskStatus),
   })
   .partial()
   .refine(
