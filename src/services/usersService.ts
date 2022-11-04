@@ -15,7 +15,7 @@ export const createUser = async (data: CreateUserRequestBody) => {
       },
     });
 
-    return exclude(user, "password");
+    return exclude(user, "password", "accessToken");
   } catch (e) {
     if (isUniqueConstraintViolation(e)) {
       throw new BadRequestError(

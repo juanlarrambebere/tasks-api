@@ -10,8 +10,20 @@ const bodySchema = z.object({
   }),
 });
 
+const paramsSchema = z.object({
+  userId: z
+    .string({
+      required_error: "userId is required",
+    })
+    .refine((value) => !Number.isNaN(parseInt(value)), {
+      message: `userId must be a number`,
+    }),
+});
+
 export const createTaskSchema = z.object({
   body: bodySchema,
+  params: paramsSchema,
 });
 
 export type CreateTaskRequestBody = z.infer<typeof bodySchema>;
+export type CreateTaskRequestParams = z.infer<typeof paramsSchema>;
