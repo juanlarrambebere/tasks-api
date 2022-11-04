@@ -25,12 +25,12 @@ export const loginHandler = async (
   next: NextFunction
 ) => {
   try {
-    const accessToken = await login(req.body);
-    if (!accessToken) {
+    const authData = await login(req.body);
+    if (!authData) {
       return next(new UnauthorizedError("Invalid credentials"));
     }
 
-    res.status(200).json({ accessToken });
+    res.status(200).json(authData);
   } catch (error) {
     next(error);
   }

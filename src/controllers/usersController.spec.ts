@@ -16,6 +16,8 @@ jest.mock("../services/usersService", () => ({
 }));
 
 describe("usersController", () => {
+  const userId = 1;
+
   afterEach(jest.clearAllMocks);
 
   describe("createUserHandler", () => {
@@ -29,7 +31,7 @@ describe("usersController", () => {
     const next = jest.fn();
 
     it("tries to create the user, and if it works, responds '201 Created' and the user's data.", async () => {
-      const createdUser = { id: 1 } as User;
+      const createdUser = { id: userId } as User;
       jest.mocked(createUser).mockResolvedValue(createdUser);
 
       await createUserHandler(request, response, next);
@@ -64,8 +66,11 @@ describe("usersController", () => {
     const next = jest.fn();
 
     it("tries to login, and if it works, responds '200 OK' and the user's acessToken", async () => {
-      const accessToken = "the access token";
-      jest.mocked(login).mockResolvedValue(accessToken);
+      const authData = {
+        id: userId,
+        accessToken: "the access token",
+      };
+      jest.mocked(login).mockResolvedValue(authData);
 
       await loginHandler(request, response, next);
 
@@ -73,7 +78,7 @@ describe("usersController", () => {
       expect(response.status).toHaveBeenCalledWith(200);
 
       expect(response.json).toHaveBeenCalledTimes(1);
-      expect(response.json).toHaveBeenCalledWith({ accessToken });
+      expect(response.json).toHaveBeenCalledWith(authData);
     });
 
     it("tries to login, and if it fails, forwards the error", async () => {
