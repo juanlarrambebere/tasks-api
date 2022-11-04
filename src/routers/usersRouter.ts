@@ -1,5 +1,8 @@
 import express from "express";
-import { getUserTasksHandler } from "../controllers/tasksController";
+import {
+  createTaskHandler,
+  getUserTasksHandler,
+} from "../controllers/tasksController";
 import {
   createUserHandler,
   loginHandler,
@@ -17,6 +20,7 @@ router.post("/", validateSchema(createUserSchema), createUserHandler);
 router.post("/login", validateSchema(loginSchema), loginHandler);
 
 // Authenticated API
+router.post("/:userId/tasks", authenticate, authorize, createTaskHandler);
 router.get("/:userId/tasks", authenticate, authorize, getUserTasksHandler);
 
 export default router;

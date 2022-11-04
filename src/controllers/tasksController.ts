@@ -1,5 +1,22 @@
 import { NextFunction, Request, Response } from "express";
-import { getUserTasks } from "../services/tastsSevice";
+import { CreateTaskRequestBody } from "../schemas/createTaskSchema";
+import { createTask, getUserTasks } from "../services/tastsSevice";
+
+export const createTaskHandler = async (
+  req: Request<{ userId: string }, {}, CreateTaskRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = parseInt(req.params.userId);
+
+    const task = await createTask(userId, req.body);
+
+    res.status(201).json(task);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getUserTasksHandler = async (
   req: Request<{ userId: string }, {}, {}>,

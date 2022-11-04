@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import { BadRequestError } from "../errors";
 import { isUniqueConstraintViolation, prismaClient } from "../prisma/client";
 import { CreateUserRequestBody } from "../schemas/createUserSchema";
+import { exclude } from "../utils";
 
 export const createUser = async (data: CreateUserRequestBody) => {
   const hashedPassword = await argon2.hash(data.password);
@@ -14,9 +15,7 @@ export const createUser = async (data: CreateUserRequestBody) => {
       },
     });
 
-    const { password, ...passwordlessUser } = user;
-
-    return passwordlessUser;
+    return exclude(user, "password");
   } catch (e) {
     if (isUniqueConstraintViolation(e)) {
       throw new BadRequestError(
