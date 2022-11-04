@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateTaskRequestBody } from "../schemas/createTaskSchema";
-import { createTask, getUserTasks } from "../services/tastsSevice";
+import { createTask, getUserTasks } from "../services/tasksSevice";
 
 export const createTaskHandler = async (
   req: Request<{ userId: string }, {}, CreateTaskRequestBody>,
