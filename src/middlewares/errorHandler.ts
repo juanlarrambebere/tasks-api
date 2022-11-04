@@ -7,6 +7,7 @@ const handleError = (
   res: Response,
   _next: NextFunction
 ) => {
+  // ApiErrors are intended to reach the end user
   if (err instanceof ApiError) {
     return res.status(err.status).json({
       code: err.name,
@@ -15,6 +16,7 @@ const handleError = (
     });
   }
 
+  // Unexpected errors are logged and prevented from reaching the end user
   console.error(err);
   res.status(500).json({ message: "Internal server error" });
 };
