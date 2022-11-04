@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { prismaClient } from "../prisma/client";
 import { LoginRequestBody } from "../schemas/loginSchema";
 
-export const login = async (data: LoginRequestBody) => {
+export const login = async (data: LoginRequestBody): Promise<string | null> => {
   const user = await prismaClient.user.findUnique({
     where: {
       username: data.username,
@@ -35,7 +35,9 @@ export const login = async (data: LoginRequestBody) => {
   return accessToken;
 };
 
-export const decodeAccessToken = async (encodedAccessToken: string) => {
+export const decodeAccessToken = async (
+  encodedAccessToken: string
+): Promise<AccessToken | null> => {
   let tokenRaw: AccessTokenRaw;
 
   try {
